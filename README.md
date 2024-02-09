@@ -1,5 +1,6 @@
 # zod-antibadcop
-discord.gg/zodiacdev
+Şikayet İçin @cfx.r 
+# detaylı bilgi için @cfx.r
 - DC: cfx.r
 
 - 🇹🇷 Bu SC Belirli Silahları Kilitleme Mesela PD Silahlarını Sivillere Kitlemeye Yarar
