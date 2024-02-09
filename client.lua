@@ -18,14 +18,7 @@ Weapons = {
 }
 
 Jobs = {
-    "police",
-    "fbi",
-    "state",
-    "sheriff",
-    "ranger",
-    "davison",
-    "lawyer",
-    "USMS"
+    "police"
 }
 
 CreateThread(function()
