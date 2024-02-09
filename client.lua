@@ -1,68 +1,60 @@
-local QBCore = exports['qb-core']:GetCoreObject()
-PlayerData = {}
+QBCore = exports['qb-core']:GetCoreObject()
 
--- Kontrol edilecek silahlar
-Weapons = {
-    "WEAPON_GLOCK",
-    "WEAPON_STUNGUN",
-    "WEAPON_PUMPSHOTGUN",
-    "WEAPON_SMG",
-    "WEAPON_M4",
-    "WEAPON_NIGHTSTICK",
-    "WEAPON_FLASHLIGHT",
-}
-
--- Meslekler
-Jobs = {
-    "police",
-}
-
-local isPlayerWhitelisted = false
-local cooldownActive = false
-
-RegisterNetEvent('QBCore:Client:OnPlayerLoaded')
 AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
     PlayerData = QBCore.Functions.GetPlayerData()
+    isPlayerWhitelisted = PlayerWhitelisted()
 end)
 
-RegisterNetEvent('QBCore:Client:OnJobUpdate')
-AddEventHandler('QBCore:Client:OnJobUpdate', function(job)
-    PlayerData.job = job
-    isPlayerWhitelisted = refreshPlayerWhitelisted()
+RegisterNetEvent('QBCore:Client:OnJobUpdate', function(JobInfo)
+    PlayerData = QBCore.Functions.GetPlayerData()
+    isPlayerWhitelisted = PlayerWhitelisted()
 end)
 
-Citizen.CreateThread(function()
+Weapons = {
+    "weapon_pistol",
+    "weapon_smg",
+    "weapon_stungun",
+    "eapon_nightstick"
+}
+
+Jobs = {
+    "police",
+    "fbi",
+    "state",
+    "sheriff",
+    "ranger",
+    "davison",
+    "lawyer",
+    "USMS"
+}
+
+CreateThread(function()
     while true do
-        Wait(1000)
+        Wait(2000)
         local player = PlayerPedId()
-
-        -- Eğer oyuncu whitelistlenmemişse ve cooldown süresi bitmişse
-        if not isPlayerWhitelisted and not cooldownActive then
-            for k, v in pairs(Weapons) do
+        if not isPlayerWhitelisted then
+            for k,v in pairs(Weapons) do
+                local player = PlayerPedId()
                 local weapon = GetHashKey(v)
-                if HasPedGotWeapon(player, weapon, false) == 1 then
+                if HasPedGotWeapon(player, weapon, false) then
                     RemoveWeaponFromPed(player, weapon)
-                    QBCore.Functions.Notify("Bu Silahı Kullanmaya Yetkin Yok Laa Gardaşşşş :).", "error")
+                    TriggerServerEvent("antibadcop:server:RemoveItem", v, 1)
+                    TriggerEvent("inventory:client:ItemBox", QBCore.Shared.Items[v], "remove", 1) 
                 end
             end
-            cooldownActive = true
-            Citizen.Wait(600000) -- 10 dakika cooldown süresi
-            cooldownActive = false
         end
     end
 end)
 
-function refreshPlayerWhitelisted()
-    if not PlayerData or not PlayerData.job then
-        return false
-    end
-
-    -- Eğer oyuncunun mesleği whitelistteki mesleklerden biriyse true döndür
-    for k, v in ipairs(Jobs) do
-        if v == PlayerData.job.name then
-            return true
-        end
-    end
-
-    return false
+function PlayerWhitelisted()
+	for k,v in ipairs(Jobs) do
+		if v == PlayerData.job.name then
+			return true
+		end
+	end
+	return false
 end
+
+
+
+
